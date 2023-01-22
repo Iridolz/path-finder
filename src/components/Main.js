@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Stage, Layer, Rect, Text } from 'react-konva';
+// import './Main.css'
 
 function Main() {
 
     const size = {
         width: window.innerWidth,
         height: window.innerHeight,
-        rect: window.innerWidth / 10,
-        rows: parseInt(window.innerHeight / (window.innerWidth / 10)),
-        columns: 10,
+        rect: window.innerWidth / 20,
+        rows: 20,
+        // rows: parseInt(window.innerHeight / (window.innerWidth / 20)),
+        columns: 20,
     }
 
     const [tab, setTab] = useState(Array.from({length: size.columns}, () => Array.from({length: size.rows}, () => 0)));
@@ -46,8 +48,10 @@ function Main() {
     }
 
     const RectOnClick = (e) => {
+        let i = e.split('-')[0]
+        let n = e.split('-')[1]
         let newTab = [...tab]
-        newTab[e.i][e.n] = nextRectType(tab[e.i][e.n])
+        newTab[i][n] = nextRectType(tab[i][n])
         setTab(newTab)
     }
 
@@ -88,6 +92,7 @@ function Main() {
     // engine function
     const engine = async (i, n, prevMoves) => {
         prevMoves.push([i, n])
+        // if end flag is found start display shortest path
         if (tab[i][n] === 3) {
             offSet = true
             finish([...prevMoves])
@@ -149,7 +154,7 @@ function Main() {
 
     return (
       <div>
-        <Stage width={size.width} height={size.height}>
+        <Stage width={size.width} height={100}>
           <Layer>
             <Text
             x={0}
@@ -166,25 +171,21 @@ function Main() {
             onClick={() => reset()}
             />
             <Text x={0} y={100} text={errorMsg}/>
-            {
-                tab.map((row, i) => (
-                    row.map((column, n) => (
-                        <Rect
-                        i={i}
-                        n={n}
-                        x={i * (size.rect)}
-                        y={(size.rect) + n * (size.height / size.rows)}
-                        width={(size.rect)}
-                        height={(size.rect)}
-                        fill={getColorFromType(column)}
-                        shadowBlur={10}
-                        onClick={e => RectOnClick(e.target.attrs)}
-                        />
-                    ))
-                ))
-            }
           </Layer>
         </Stage>
+        <div className='grid'>
+            {
+                tab.map((row, i) => (
+                    <div className='column'>
+                        {
+                            row.map((column, n) => (
+                                <div className='rect' style={{background: getColorFromType(column)}} onClick={e => RectOnClick(e.target.id)} id={`${i}-${n}`}></div>
+                        ))
+                        }
+                    </div>
+                ))
+            }
+        </div>
       </div>
     );
   }

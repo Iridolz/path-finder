@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+div .grid {
+  height: 100vh;
+  width: 100vh;
+  flex-direction: row;
+  display: flex;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+div .column {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+div .rect {
+  display: flex;
+  flex: 1;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  transition: .3s ease-in-out;
+}
