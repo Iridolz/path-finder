@@ -37,12 +37,69 @@
   }
 }
 
+div .selector {
+  border-radius: 50%;
+  width: 5vh;
+  height: 5vh;
+}
+
+div .cursor {
+  position: absolute;
+  width: 3vh;
+  height: 3vh;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+div .wrapper {
+  width: 100vw;
+  height: 100vh;
+}
+
+div .button {
+  margin: 1%;
+  border-radius: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+div #run {
+  background-color: rgba(0, 0, 255, 0.5);
+  width: 60%;
+  height: 10%;
+}
+
+div #reset {
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 40%;
+  height: 7%;
+}
+
+div .right {
+  float: right;
+  height: 100vh;
+  width: calc(100vw - 100vh);
+  display: flex;
+  align-items: center;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently */
+}
+
 div .grid {
+  overflow: hidden;
   height: 100vh;
   width: 100vh;
   flex-direction: row;
   display: flex;
-  border: 1px solid rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 div .column {
@@ -54,6 +111,7 @@ div .column {
 div .rect {
   display: flex;
   flex: 1;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  transition: .3s ease-in-out;
+  /* transition: .3s ease-in-out; */
+  border-radius: 15px;
+  margin: .5px;
 }

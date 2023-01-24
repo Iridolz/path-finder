@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Rect, Text } from 'react-konva';
 // import './Main.css'
 
@@ -16,6 +16,52 @@ function Main() {
     const [tab, setTab] = useState(Array.from({length: size.columns}, () => Array.from({length: size.rows}, () => 0)));
     const [errorMsg, setErrorMsg] = useState('')
     let offSet = false // false = end flag not finded yet, true = finded
+    const [cursor, setCursor] = useState(0)
+
+    const intervalRef = useRef(null);
+  
+    useEffect(() => {
+      return () => stopCounter(); // when App is unmounted we should stop counter
+    }, []);
+
+    const startCounter = () => {
+        if (intervalRef.current) return;
+        intervalRef.current = setInterval(10);
+      };
+    
+    const stopCounter = () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      };
+
+    const cursorSelector = (i) => {
+        if (cursor === i) {
+            setCursor(0)
+        }
+        if (cursor !== i) {
+            setCursor(i)
+        }
+    }
+
+    const RectOnSelect = (e) => {
+        if (cursor !== 0 && intervalRef.current > 0) {
+            let i = e.split('-')[0]
+            let n = e.split('-')[1]
+            let newTab = [...tab]
+            newTab[i][n] = cursor
+            setTab(newTab)
+        }
+    }
+
+    // document.addEventListener('mousemove', (e) => {
+    //     if (cursor !== 0) {
+    //         let c = document.getElementsByClassName('cursor')
+    //         c[0].style.left = e.clientX + 'px'
+    //         c[0].style.top = e.clientY + 'px'
+    //     }
+    // })
 
     // function that display path when end flag has been find
     const finish = async (prevMoves) => {
@@ -36,7 +82,7 @@ function Main() {
         {type: 2, color: 'green', name: 'start'},
         {type: 3, color: 'red', name: 'end'},
         {type: 4, color: 'grey', name: 'checked'},
-        {type: 5, color: 'blue', name: 'path'},
+        {type: 5, color: 'yellow', name: 'path'},
     ]
 
     const nextRectType = (actual) => {
@@ -104,7 +150,7 @@ function Main() {
             newTab[i][n] = 4
             setTab(newTab)
         }
-        await sleep(500)
+        await sleep(300)
         // try to make a move all direction
         doMove(i + 1, n, prevMoves)
         doMove(i - 1, n, prevMoves)
@@ -153,38 +199,42 @@ function Main() {
     }
 
     return (
-      <div>
-        <Stage width={size.width} height={100}>
-          <Layer>
-            <Text
-            x={0}
-            y={0}
-            text={`RUN ${size.columns} x ${size.rows}`}
-            fontSize={100}
-            onClick={() => run()}
-            />
-            <Text
-            x={800}
-            y={0}
-            text={`RESET`}
-            fontSize={100}
-            onClick={() => reset()}
-            />
-            <Text x={0} y={100} text={errorMsg}/>
-          </Layer>
-        </Stage>
-        <div className='grid'>
+      <div className='noselect'>
+        {<div className='cursor' style={{background: getColorFromType(cursor)}}></div>}
+        <div className='wrapper'>
+        <div className='right'>
+            <div className='button' id='run' onClick={() => run()}>
+                <p>RUN</p>
+            </div>
+            <br></br>
+            <div className='button' id='reset' onClick={() => reset()}>
+                <p>Reset</p>
+            </div>
+            <div>
+                <p>{errorMsg}</p>
+            </div>
+            {<div className='selector' id='1' style={{background: getColorFromType(1)}} onClick={e => cursorSelector(parseInt(e.target.id))}></div>}
+        </div>
+        <div className='grid'
+            onMouseDown={e => startCounter()}
+            onMouseUp={e => stopCounter()}
+            onMouseLeave={e => stopCounter()}>
             {
                 tab.map((row, i) => (
                     <div className='column'>
                         {
                             row.map((column, n) => (
-                                <div className='rect' style={{background: getColorFromType(column)}} onClick={e => RectOnClick(e.target.id)} id={`${i}-${n}`}></div>
+                                <div className='rect'
+                                    style={{background: getColorFromType(column)}}
+                                    onClick={e => RectOnClick(e.target.id)} id={`${i}-${n}`}
+                                    onMouseOver={e => RectOnSelect(e.target.id)}>
+                                </div>
                         ))
                         }
                     </div>
                 ))
             }
+        </div>
         </div>
       </div>
     );
